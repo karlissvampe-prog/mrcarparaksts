@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>MRCar.lv e-pasta paraksta ģenerators</title>
+<title>E-pasta paraksta ģenerators: MRCar.lv un TaviDraugi.lv</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -59,6 +59,15 @@ ol{padding-left:20px;margin:10px 0 0}
 ol li{margin:4px 0}
 .steps{margin-top:22px}
 code{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;background:var(--tint);padding:1px 5px;border-radius:5px}
+.brands{display:inline-flex;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:4px;gap:4px}
+.brands button{background:transparent;color:var(--muted);border:0;padding:9px 14px;border-radius:9px;font-weight:600}
+.brands button[aria-pressed="true"]{background:var(--accent);color:#fff}
+#legalMr label,#legalTd label:first-of-type{margin-top:14px}
+textarea.edit{min-height:96px;font:inherit;font-size:13.5px}
+.fixed{font-size:13px;color:var(--muted);background:var(--tint);border-radius:9px;padding:10px 12px;line-height:1.5}
+:root[data-brand="td"]{--accent:#841f1d;--deep:#841f1d;--tint:#F6ECEB}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"])[data-brand="td"]{--accent:#B8403C;--deep:#E08A86;--tint:#3A1E1D}}
+:root[data-theme="dark"][data-brand="td"]{--accent:#B8403C;--deep:#E08A86;--tint:#3A1E1D}
 </style>
 </head>
 <body>
@@ -66,7 +75,11 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;background:var(--
   <header>
     <div>
       <h1>E-pasta paraksts</h1>
-      <p>Aizpildi laukus, pārbaudi priekšskatījumu un iekopē parakstu Thunderbird. Stils sakrīt ar MRCar.lv piedāvājumu PDF.</p>
+      <p id="intro">Aizpildi laukus, pārbaudi priekšskatījumu un iekopē parakstu Thunderbird.</p>
+    </div>
+    <div class="brands" role="group" aria-label="Organizācija">
+      <button type="button" data-b="mr" aria-pressed="true">MRCar.lv</button>
+      <button type="button" data-b="td" aria-pressed="false">TaviDraugi.lv</button>
     </div>
   </header>
 
@@ -76,24 +89,36 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;background:var(--
       <label for="name">Vārds, uzvārds</label>
       <input id="name" type="text" value="Vārds Uzvārds" autocomplete="name">
       <label for="role">Amats</label>
-      <input id="role" type="text" value="Pārvadājumu menedžeris">
+      <input id="role" type="text">
       <label for="phone">Tālrunis</label>
       <input id="phone" type="tel" value="+371 20 000 000" autocomplete="tel">
       <div class="hint">Ar valsts kodu. Saitēm atstarpes tiek noņemtas automātiski.</div>
       <label class="check"><input id="wa" type="checkbox" checked> Rādīt WhatsApp saiti uz šo numuru</label>
       <label for="email">E-pasts</label>
-      <input id="email" type="email" value="vards@mrcar.lv" autocomplete="email">
+      <input id="email" type="email" autocomplete="email">
       <label for="web">Mājaslapa</label>
-      <input id="web" type="text" value="mrcar.lv">
+      <input id="web" type="text">
+
+      <div id="legalMr">
+        <label>Uzņēmuma dati un privātuma atruna</label>
+        <div class="fixed">Tiek pievienoti automātiski (MR SIA rekvizīti un GDPR teksts).</div>
+      </div>
+      <div id="legalTd" hidden>
+        <label for="org">Organizācijas dati (katrs savā rindā)</label>
+        <textarea id="org" class="edit"></textarea>
+        <label for="privacy">Privātuma atruna</label>
+        <textarea id="privacy" class="edit"></textarea>
+        <div class="hint">Pārbaudi un pielāgo tekstu. Tukšs lauks parakstā netiek rādīts.</div>
+      </div>
     </section>
 
     <section class="card" aria-labelledby="p-title">
       <h2 id="p-title">Priekšskatījums</h2>
       <div class="stage">
-        <p class="mailtext">Labdien!<br><br>Paldies par interesi, pielikumā piedāvājums.</p>
+        <p class="mailtext" id="mailtext"></p>
         <div id="sig"></div>
       </div>
-      <div class="hint">Priekšskatījums rāda Arial, kā to redzēs lielākā daļa saņēmēju. Ja datorā instalēts Outfit, paraksts izskatās kā piedāvājumu PDF.</div>
+      <div class="hint">Priekšskatījums rāda Arial, kā to redzēs lielākā daļa saņēmēju.</div>
       <div class="actions">
         <button class="primary" id="copyHtml" type="button">Kopēt HTML kodu</button>
         <button class="ghost" id="copyRich" type="button">Kopēt parakstu (Gmail, Outlook)</button>
@@ -108,7 +133,7 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;background:var(--
         <h2>Pievienošana Thunderbird</h2>
         <ol>
           <li>Nospied <strong>Kopēt HTML kodu</strong>.</li>
-          <li>Thunderbird: <code>☰ → Konta iestatījumi</code> (Account Settings), izvēlies savu @mrcar.lv kontu.</li>
+          <li>Thunderbird: <code>☰ → Konta iestatījumi</code> (Account Settings), izvēlies savu kontu.</li>
           <li>Atzīmē <strong>Lietot HTML</strong> (Use HTML) pie lauka "Paraksta teksts".</li>
           <li>Iekopē kodu laukā un aizver iestatījumus.</li>
           <li>Sastādīšanas iestatījumos (Composition &amp; Addressing) ieslēdz <strong>Rakstīt ziņojumus HTML formātā</strong>.</li>
@@ -121,15 +146,42 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;background:var(--
 <script>
 (function(){
   var $ = function(id){ return document.getElementById(id); };
-  var ids = ['name','role','phone','wa','email','web'];
-  var LOGO_URL = 'https://tms.mrcar.lv/brand/logo-email.png';
 
-  function esc(s){
-    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
+  var BRANDS = {
+    mr: {
+      logo: 'https://tms.mrcar.lv/brand/logo-email.png', logoAlt: 'MRCar.lv', logoW: null,
+      accent: '#31C0CC', link: '#0F6E77', sep: '#A9DFE4',
+      role: 'Pārvadājumu menedžeris', email: 'vards@mrcar.lv', web: 'mrcar.lv',
+      mail: 'Labdien!<br><br>Paldies par interesi, pielikumā piedāvājums.',
+      org: 'MR SIA\nReģ. Nr. 44103130848\nPVN Nr. LV44103130848\nSelgas iela 13, Engure, Engures pag., Tukuma nov., LV-3113',
+      privacy: 'Personas datus apstrādā MR SIA, lai sagatavotu piedāvājumu un izpildītu pārvadājumu. Datus nododam tikai pārvadājuma izpildei (piem. partneru pārvadātājiem) un likumā noteiktajos gadījumos. Piekļuvei, labošanai vai dzēšanai rakstiet info@mrcar.lv.',
+      editable: false
+    },
+    td: {
+      logo: 'https://www.tavidraugi.lv/wp-content/uploads/2026/10/TD-logo-paraksts.png', logoAlt: 'Biedrība Tavi draugi', logoW: 60,
+      accent: '#841f1d', link: '#841f1d', sep: '#cccccc',
+      role: 'Brīvprātīgais', email: 'vards@tavidraugi.lv', web: 'tavidraugi.lv',
+      mail: 'Labdien!<br><br>Paldies par jūsu ziņu.',
+      org: 'Biedrība „Tavi draugi”',
+      privacy: 'Personas datus apstrādā biedrība „Tavi draugi”, lai atbildētu uz jūsu ziņu un nodrošinātu sadarbību. Datus nododam trešajām personām tikai tad, ja tas nepieciešams sadarbības izpildei vai to paredz likums. Piekļuvei, labošanai vai dzēšanai rakstiet info@tavidraugi.lv.',
+      editable: true
+    }
+  };
+  var state = { mr: {}, td: {} };
+  var brand = 'mr';
+  var perBrand = ['role','email','web','org','privacy'];
+  var allIds = ['name','role','phone','wa','email','web','org','privacy'];
+
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
   function digits(p){ return String(p).replace(/[^\d+]/g,''); }
+  function lines(s){ return esc(s.trim()).replace(/\r?\n/g,'<br>'); }
+  function linkify(s, color){
+    return lines(s).replace(/([A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,})/g,
+      '<a href="mailto:$1" style="color:' + color + ';text-decoration:underline;">$1</a>');
+  }
 
   function build(){
+    var B = BRANDS[brand];
     var name = $('name').value.trim();
     var role = $('role').value.trim();
     var phone = $('phone').value.trim();
@@ -138,16 +190,18 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;background:var(--
     var showWa = $('wa').checked && waNum.length > 6;
     var email = $('email').value.trim();
     var web = $('web').value.trim().replace(/^https?:\/\//,'').replace(/\/$/,'');
-    var logo = LOGO_URL;
+    var org = B.editable ? $('org').value : B.org;
+    var privacy = B.editable ? $('privacy').value : B.privacy;
 
     var font = "font-family:'Outfit','DM Sans',Arial,Helvetica,sans-serif;";
     var body = "font-family:'DM Sans',Arial,Helvetica,sans-serif;";
-    var link = "color:#0F6E77;text-decoration:none;";
-    var sep = '<span style="color:#A9DFE4;padding:0 6px;">|</span>';
+    var link = "color:" + B.link + ";text-decoration:none;";
+    var sep = '<span style="color:' + B.sep + ';padding:0 6px;">|</span>';
+    var muted = 'color:#5C676B;';
 
-    var logoCell = logo
-      ? '<img src="' + esc(logo) + '" alt="MRCar.lv" height="60" style="display:block;height:60px;width:auto;border:0;">'
-      : '<div style="' + font + 'font-weight:700;font-size:20px;line-height:1;color:#1B1B1B;letter-spacing:0.02em;">MR&nbsp;CAR<span style="color:#31C0CC;">.LV</span></div>';
+    var logoCell = '<img src="' + esc(B.logo) + '" alt="' + esc(B.logoAlt) + '" height="60"' +
+      (B.logoW ? ' width="' + B.logoW + '"' : '') +
+      ' style="display:block;height:60px;' + (B.logoW ? 'width:' + B.logoW + 'px;' : 'width:auto;') + 'border:0;">';
 
     var contact = [];
     if (tel) contact.push('<a href="tel:' + esc(tel) + '" style="' + link + '">' + esc(phone) + '</a>');
@@ -160,30 +214,49 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;background:var(--
 '<table cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:collapse;' + body + 'color:#1B1B1B;">' +
 '<tr>' +
 '<td style="padding:0 18px 0 0;vertical-align:middle;">' + logoCell + '</td>' +
-'<td style="padding:0 0 0 18px;border-left:3px solid #31C0CC;vertical-align:middle;">' +
+'<td style="padding:0 0 0 18px;border-left:3px solid ' + B.accent + ';vertical-align:middle;">' +
   (name ? '<div style="' + font + 'font-weight:600;font-size:17px;line-height:1.25;color:#1B1B1B;">' + esc(name) + '</div>' : '') +
-  (role ? '<div style="' + body + 'font-size:13px;line-height:1.4;color:#5C676B;padding-top:1px;">' + esc(role) + '</div>' : '') +
+  (role ? '<div style="' + body + 'font-size:13px;line-height:1.4;' + muted + 'padding-top:1px;">' + esc(role) + '</div>' : '') +
   (contact.length ? '<div style="' + body + 'font-size:13px;line-height:1.5;padding-top:8px;">' + contact.join(sep) + '</div>' : '') +
   (line2.length ? '<div style="' + body + 'font-size:13px;line-height:1.5;">' + line2.join(sep) + '</div>' : '') +
 '</td>' +
 '</tr>' +
-'</table>' +
-'<table cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:collapse;margin-top:14px;max-width:560px;">' +
-'<tr><td style="' + body + 'font-size:11px;line-height:1.5;color:#5C676B;border-top:1px solid #E3E8EA;padding-top:8px;">' +
-'MR SIA<br>Reģ. Nr. 44103130848<br>PVN Nr. LV44103130848<br>Selgas iela 13, Engure, Engures pag., Tukuma nov., LV-3113' +
-'</td></tr>' +
-'<tr><td style="' + body + 'font-size:11px;line-height:1.5;color:#5C676B;padding-top:4px;">' +
-'Personas datus apstrādā MR SIA, lai sagatavotu piedāvājumu un izpildītu pārvadājumu. Datus nododam tikai pārvadājuma izpildei (piem. partneru pārvadātājiem) un likumā noteiktajos gadījumos. Piekļuvei, labošanai vai dzēšanai rakstiet <a href="mailto:info@mrcar.lv" style="color:#5C676B;text-decoration:underline;">info@mrcar.lv</a>.' +
-'</td></tr>' +
 '</table>';
+
+    var fine = '';
+    if (org.trim()) fine += '<tr><td style="' + body + 'font-size:11px;line-height:1.5;' + muted + 'border-top:1px solid #E3E8EA;padding-top:8px;">' + lines(org) + '</td></tr>';
+    if (privacy.trim()) fine += '<tr><td style="' + body + 'font-size:11px;line-height:1.5;' + muted + (org.trim() ? 'padding-top:4px;' : 'border-top:1px solid #E3E8EA;padding-top:8px;') + '">' + linkify(privacy, '#5C676B') + '</td></tr>';
+    if (fine) html += '<table cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:collapse;margin-top:14px;max-width:560px;">' + fine + '</table>';
     return html;
   }
 
   function render(){
     var html = build();
-    // Priekšskatījums bez web fontiem: tā, kā to redzēs saņēmējs (Arial/Helvetica)
     $('sig').innerHTML = html.replace(/'Outfit',/g,'').replace(/'DM Sans',/g,'');
     $('code').value = html;
+  }
+
+  function save(){ perBrand.forEach(function(id){ state[brand][id] = $(id).value; }); }
+  function setBrand(b, skipSave){
+    if (!skipSave) save();
+    brand = b;
+    var B = BRANDS[b];
+    document.documentElement.setAttribute('data-brand', b);
+    document.querySelectorAll('.brands button').forEach(function(btn){
+      btn.setAttribute('aria-pressed', btn.getAttribute('data-b') === b ? 'true' : 'false');
+    });
+    perBrand.forEach(function(id){
+      var v = state[b][id];
+      $(id).value = (v !== undefined) ? v : (B[id] || '');
+    });
+    $('legalMr').hidden = B.editable;
+    $('legalTd').hidden = !B.editable;
+    $('mailtext').innerHTML = B.mail;
+    $('intro').textContent = b === 'mr'
+      ? 'MRCar.lv paraksts. Stils sakrīt ar piedāvājumu PDF. Aizpildi laukus un iekopē Thunderbird.'
+      : 'TaviDraugi.lv paraksts. Aizpildi laukus, pārbaudi organizācijas datus un privātuma atrunu, iekopē Thunderbird.';
+    try { history.replaceState(null, '', '#' + (b === 'mr' ? 'mrcar' : 'tavidraugi')); } catch(e){}
+    render();
   }
 
   function flash(msg){
@@ -191,24 +264,25 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;background:var(--
     clearTimeout(flash.t);
     flash.t = setTimeout(function(){ $('status').textContent=''; }, 3500);
   }
-
-  function fallbackCopy(text){
+  function fallbackCopy(){
     var ta = $('code');
     ta.closest('details').open = true;
     ta.focus(); ta.select();
-    try { document.execCommand('copy'); return true; } catch(e){ return false; }
+    try { return document.execCommand('copy'); } catch(e){ return false; }
   }
-
   $('copyHtml').addEventListener('click', function(){
     var html = build();
+    var fail = function(){ flash(fallbackCopy() ? 'HTML kods nokopēts.' : 'Atver "Rādīt HTML kodu" un nokopē ar roku.'); };
     if (navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(html).then(function(){ flash('HTML kods nokopēts.'); },
-        function(){ flash(fallbackCopy(html) ? 'HTML kods nokopēts.' : 'Atver "Rādīt HTML kodu" un nokopē ar roku.'); });
-    } else {
-      flash(fallbackCopy(html) ? 'HTML kods nokopēts.' : 'Atver "Rādīt HTML kodu" un nokopē ar roku.');
-    }
+      navigator.clipboard.writeText(html).then(function(){ flash('HTML kods nokopēts.'); }, fail);
+    } else { fail(); }
   });
-
+  function selectPreview(){
+    var r = document.createRange(); r.selectNodeContents($('sig'));
+    var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+    var ok = false; try { ok = document.execCommand('copy'); } catch(e){}
+    flash(ok ? 'Paraksts nokopēts.' : 'Paraksts iezīmēts, nospied Ctrl/Cmd+C.');
+  }
   $('copyRich').addEventListener('click', function(){
     var html = build();
     try {
@@ -217,27 +291,22 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;background:var(--
           'text/html': new Blob([html], {type:'text/html'}),
           'text/plain': new Blob([$('sig').innerText], {type:'text/plain'})
         });
-        navigator.clipboard.write([item]).then(function(){ flash('Paraksts nokopēts. Iekopē paraksta laukā.'); },
-          function(){ selectPreview(); });
+        navigator.clipboard.write([item]).then(function(){ flash('Paraksts nokopēts. Iekopē paraksta laukā.'); }, selectPreview);
         return;
       }
     } catch(e){}
     selectPreview();
   });
 
-  function selectPreview(){
-    var r = document.createRange(); r.selectNodeContents($('sig'));
-    var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
-    var ok = false; try { ok = document.execCommand('copy'); } catch(e){}
-    flash(ok ? 'Paraksts nokopēts.' : 'Paraksts iezīmēts, nospied Ctrl/Cmd+C.');
-  }
-
-  ids.forEach(function(id){
+  document.querySelectorAll('.brands button').forEach(function(btn){
+    btn.addEventListener('click', function(){ var b = btn.getAttribute('data-b'); if (b !== brand) setBrand(b); });
+  });
+  allIds.forEach(function(id){
     var el = $(id);
     el.addEventListener('input', render);
     el.addEventListener('change', render);
   });
-  render();
+  setBrand(location.hash === '#tavidraugi' ? 'td' : 'mr', true);
 })();
 </script>
 </body>
